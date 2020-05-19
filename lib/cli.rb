@@ -5,6 +5,7 @@
 
 class Cli
   def call
-    puts "Hello World!"
+    scraper = Scraper.new
+    scraper.scrape_park_page
   end
 end
