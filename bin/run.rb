@@ -1,3 +1,3 @@
 require "./config/environment"
 
-Cli.new.call
+CommandLineInterface.new.call

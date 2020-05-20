@@ -2,23 +2,29 @@
 # This file WILL use nokogiri
 # This file will never use puts
 
-
 class Scraper
-  attr_accessor :doc
+  BASE_PATH = "https://www.dcnr.pa.gov/StateParks/FindAPark"
 
-  def initialize
-    @doc = Nokogiri::HTML(HTTParty.get("https://www.dcnr.pa.gov/StateParks/FindAPark/Pages/default.aspx").body)
+# scrapes URL to get a list of state parks and deletes instances of "Facebook" from array. Returns array with parks and URLs.
+  def self.scrape_index_page
+    index_page = Nokogiri::HTML(HTTParty.get(BASE_PATH).body)
+
+    state_parks = index_page.css(".ms-rtestate-field p a").reject { |park|
+      park.text.match("Facebook") || park.text.match("Twitter") }
+    state_parks.each do |park|
+      park_name = park.text
+      park_link = "https://www.dcnr.pa.gov" + park.attr("href")
+      StatePark.new(park_name, park_link)
+    end
   end
-
-  def scrape_park_page
-    binding.pry
-
-    # doc.css("strong").children[1].text
-    # => "Alphabetical listing of all Pennsylvania state parks"
-  end
-
 end
-# state_parks = {}
 
-# Find a State Park = doc.css("ms-rteElement-H1").text
-# List of state parks = doc.css.a.text
+#scrapes each state park's page to get the name, description of park, directions, and contact info.
+  def self.scrape_park_profile_page(park_url)
+    park_page = Nokogiri::HTML(HTTParty.get(BASE_PATH).body)
+    park name = park_page.css(".ms-rteElement-H1").text
+    description = park_page.css(".ms-rteElement-H1 p").text
+    directions = park_page.css(".ms-rteElement-H2[1] p").text
+    contact us = park_page.css("#RightSocialZone table").text
+
+  end
