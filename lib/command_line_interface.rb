@@ -4,27 +4,53 @@
 # This will have to invoke Scraper
 
 class CommandLineInterface
+  attr_reader :scraper
+
   def call
     puts "Hello! Welcome to the PA State Parks info app."
-    Scraper.scrape_index_page
+    @scraper = Scraper.new
+    scraper.scrape_index_page
+    start
+  end
 
-    puts "Type the first letter of the park to begin your search. (To view a list of all state parks, type ALL.)"
+  def start
+    park_list
+    loop do
+      make_selection
 
-    command = gets.strip.downcase
-     command == "all"
-      parks = StatePark.all
-      parks.map { |park| puts "#{park.id}. #{park.name}" }
-        #elsif invalid_input?(command)#make sure code is exactly a letter regex(must be 1 character)
-      # puts "hey try again"
-    # else
-    #   parks = StatePark.parks_starting_with(command)
-    #   parks.each do |park|
-    #     puts "#{park.id}. #{park.name}"
+      input = gets.strip.downcase
+      if input == "exit"
+        goodbye
+        exit
+      elsif input.to_i <= 0
+      puts "Invalid entry. Please try again."
+      elsif
+        park = park_position(input)
+        park_info(park)
+      end
+    end
+  end
+
+  def park_list
+    puts "List of all the state parks in Pennsylvania:"
+    StatePark.all.map { |park| puts "#{park.id}. #{park.name}" }
+  end
+
+  def make_selection
+    puts "Type the number of the park you wish to see more info about."
+    puts "To exit, type exit"
+  end
+
+  def park_info(park)
+    scraper.scrape_park_page(park)
+  end
+
+  def park_position(input)
+    StatePark.find_by_id(input.to_i)
+  end
+
+  def goodbye
+    puts "Thanks for checking out PA State Parks."
+    puts "Have a great day!"
   end
 end
-      # input of id number
-
-
-  # def invalid_input?(command)
-  #   false
-  # end
