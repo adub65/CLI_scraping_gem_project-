@@ -27,22 +27,32 @@ class Scraper
     park_page = Nokogiri::HTML(
       HTTParty.get("#{park.url}").body)
     park.description = park_page.css(".ms-rteElement-H1")[0].next.text + park_page.css(".ms-rteElement-H1")[0].next.next.text
-      binding.pry
 
     park_direction = park_page.css("h2.ms-rteElement-H2").find do |el|
       el.text == "Directions"
     end
-    park.location = park_direction.next.text
+    if park_direction
+      park.location = park_direction.next.text
+    else
+      park.location = "See website for more details."
+    end
 
     park_reserve = park_page.css("h2.ms-rteElement-H2").find do |el|
       el.text == "Reservations"
     end
-    park.reservation = park_reserve.next.text.gsub("\n   ", "")
+    if park_reserve
+      park.reservation = park_reserve.next.text.gsub("\n   ", "")
+    else
+      park.reservation = "No reservations available."
+    end
 
     park_activity = park_page.css("h2.ms-rteElement-H2").find do |el|
       el.text == "Learn, Experience, Connect"
     end
-    park.experience = park_activity.next.text
+    if park_activity
+      park.experience = park_activity.next.text
+    else
+      park.experience = "See website for more details."
+    end
   end
-
 end

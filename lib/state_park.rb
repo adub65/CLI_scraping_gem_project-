@@ -1,8 +1,3 @@
-# This is responsible for the blueprint of a State Park
-# This will never use nokogiri
-# This will never use puts
-# store all of my State Parks instance data, i.e. attributes
-
 class StatePark
   @@all = []
 
@@ -24,7 +19,7 @@ class StatePark
   end
 
   def self.find_by_id(id)
-  all.find { |park| park.id == id }
+    all.find { |park| park.id == id }
   end
 
 end

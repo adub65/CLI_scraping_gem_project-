@@ -43,6 +43,11 @@ class CommandLineInterface
 
   def park_info(park)
     scraper.scrape_park_page(park)
+    puts park.name
+    puts park.url
+    puts park.location
+    puts park.description
+    puts park.experience
   end
 
   def park_position(input)
