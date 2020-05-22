@@ -1,14 +1,11 @@
-# This is responsible for scraping my web page.
-# This file WILL use nokogiri
-# This file will never use puts
-
 class Scraper
   BASE_PATH = "https://www.dcnr.pa.gov".freeze
+  attr_reader :park_page, :index_page
 
   def scrape_parks
-    index_page = Nokogiri::HTML(
-      HTTParty.get("#{BASE_PATH}/StateParks/FindAPark").body)
-
+    @index_page = Nokogiri::HTML(
+      HTTParty.get("#{BASE_PATH}/StateParks/FindAPark").body
+    )
     state_parks = index_page.css(".ms-rtestate-field p a").reject do |park|
       park.text.match("Facebook") || park.text.match("Twitter")
     end
@@ -21,11 +18,16 @@ class Scraper
   end
 
   def scrape_park_page(park)
-    park_page = Nokogiri::HTML(
-      HTTParty.get(park.url.to_s).body
-    )
+    @park_page = Nokogiri::HTML(HTTParty.get(park.url).body)
     park.description = park_page.css(".ms-rteElement-H1")[0].next.text
+    determine_location(park)
+    possible_reservation(park)
+    what_to_do_at_park(park)
+  end
 
+private
+
+  def determine_location(park)
     park_direction = park_page.css("h2.ms-rteElement-H2").find do |el|
       el.text == "Directions"
     end
@@ -34,7 +36,9 @@ class Scraper
                     else
                       "See website for more details."
                     end
+  end
 
+  def possible_reservation(park)
     park_reserve = park_page.css("h2.ms-rteElement-H2").find do |el|
       el.text == "Reservations"
     end
@@ -43,7 +47,9 @@ class Scraper
                        else
                          "No reservations available."
                        end
+  end
 
+  def what_to_do_at_park(park)
     park_activity = park_page.css("h2.ms-rteElement-H2").find do |el|
       el.text == "Learn, Experience, Connect"
     end

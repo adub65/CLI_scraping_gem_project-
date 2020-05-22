@@ -66,7 +66,7 @@ class CommandLineInterface
   end
 
   def input_condition(input)
-    if input.to_i >=0 && input.to_i <= 122
+    if input.to_i >= 0 && input.to_i <= 122
       true
     else
       puts "Invalid entry. Please try again.".colorize(:red)
@@ -119,12 +119,11 @@ class CommandLineInterface
   end
 
   def open_url(park)
-    HTTParty.get(park.url.to_s)
+    Launchy.open(park.url.to_s)
   end
 
   def goodbye
     puts "Thanks for checking out PA State Parks.".colorize(:green)
     puts "Have a great day!".colorize(:light_green)
   end
-
 end

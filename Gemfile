@@ -3,6 +3,7 @@
 source "https://rubygems.org"
 
 gem "httparty"
+gem "launchy"
 gem "nokogiri"
 gem "pry"
 gem "require_all"

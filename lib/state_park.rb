@@ -21,5 +21,4 @@ class StatePark
   def self.find_by_id(id)
     all.find { |park| park.id == id }
   end
-
 end
