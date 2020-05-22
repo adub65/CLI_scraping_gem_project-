@@ -1,61 +1,130 @@
-# This class is responsible for communication with the user.
-# This is where we'll use 'puts' a lot.
-# This will never use nokogiri
-# This will have to invoke Scraper
-
 class CommandLineInterface
-  attr_reader :scraper
-
   def call
-    puts "Hello! Welcome to the PA State Parks info app."
-    @scraper = Scraper.new
-    scraper.scrape_index_page
-    start
+    welcome
+    Scraper.new.scrape_parks
+    run
   end
 
-  def start
+  def run
     park_list
-    loop do
-      make_selection
+    prompt_to_input
 
-      input = gets.strip.downcase
-      if input == "exit"
-        goodbye
-        exit
-      elsif input.to_i <= 0
-      puts "Invalid entry. Please try again."
-      elsif
-        park = park_position(input)
-        park_info(park)
-      end
-    end
+    input = gets.strip.to_i
+    input_condition(input)
+
+    park = park_position(input)
+
+    display_park_info(park)
+    display_additional_park_info(park)
+
+    end_commands(park)
+  end
+
+  def welcome
+    puts "Hello! Welcome to the PA State Parks info app.".colorize(:blue)
+    sleep(2)
   end
 
   def park_list
-    puts "List of all the state parks in Pennsylvania:"
-    StatePark.all.map { |park| puts "#{park.id}. #{park.name}" }
+    StatePark.all.map do |park|
+      puts "#{park.id}. #{park.name}".colorize(:light_blue)
+    end
   end
 
-  def make_selection
-    puts "Type the number of the park you wish to see more info about."
-    puts "To exit, type exit"
+  def prompt_to_input
+    puts "For more info, type the number of the park.".colorize(:blue)
+  end
+
+  def display_park_info(park)
+    puts "You have chosen #{park.name}."
+    puts park.description
+    puts "______________________________"
+    puts "#{more_info}#{park.name}?".colorize(:blue)
+  end
+
+  def display_additional_park_info(park)
+    input = gets.strip.downcase
+    if input == "yes"
+      Scraper.new.scrape_park_page(park)
+      park_info(park)
+      options(park)
+    else
+      redirect
+    end
   end
 
   def park_info(park)
-    scraper.scrape_park_page(park)
-    puts park.name
-    puts park.url
-    puts park.location
-    puts park.description
-    puts park.experience
+    puts "Website: #{park.url}".colorize(:light_blue)
+    puts "Location in PA: #{park.location}".colorize(:light_blue)
+    puts "Reservations: #{park.reservation}".colorize(:light_blue)
+    puts "Experiences: #{park.experience}".colorize(:light_blue)
+    puts "______________________________"
   end
 
   def park_position(input)
-    StatePark.find_by_id(input.to_i)
+    StatePark.find_by_id(input)
+  end
+
+  def input_condition(input)
+    if input.to_i >=0 && input.to_i <= 122
+      true
+    else
+      puts "Invalid entry. Please try again.".colorize(:red)
+      sleep(1)
+      run
+    end
+  end
+
+  def more_info
+    "Would you like to find out more about "
+  end
+
+  def options(park)
+    puts back
+    puts "#{visit}#{park.name}."
+    puts exit_message
+  end
+
+  def redirect
+    puts "Going back to park list...".colorize(:red)
+    sleep(1)
+    run
+  end
+
+  def end_commands(park)
+    input2 = gets.strip.downcase
+    if input2 == "back"
+      redirect
+      run
+    elsif input2 == "open"
+      open_url(park)
+    elsif input2 == "exit"
+      goodbye
+    else
+      puts "Invalid entry, redirecting back to park list."
+      run
+    end
+  end
+
+  def back
+    "Type 'back' to return to the park list."
+  end
+
+  def visit
+    "Type 'open' to visit the info webpage for "
+  end
+
+  def exit_message
+    "Type 'exit' to exit out of the movie list."
+  end
+
+  def open_url(park)
+    HTTParty.get(park.url.to_s)
   end
 
   def goodbye
-    puts "Thanks for checking out PA State Parks."
-    puts "Have a great day!"
+    puts "Thanks for checking out PA State Parks.".colorize(:green)
+    puts "Have a great day!".colorize(:light_green)
   end
+
 end

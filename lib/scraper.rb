@@ -5,10 +5,7 @@
 class Scraper
   BASE_PATH = "https://www.dcnr.pa.gov".freeze
 
-  # scrapes URL to get a list of state parks and
-  # deletes instances of "Facebook" from array.
-  # Returns array with parks and URLs.
-  def scrape_index_page
+  def scrape_parks
     index_page = Nokogiri::HTML(
       HTTParty.get("#{BASE_PATH}/StateParks/FindAPark").body)
 
