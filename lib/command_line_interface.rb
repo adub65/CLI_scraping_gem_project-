@@ -7,7 +7,7 @@ class CommandLineInterface
 
   def run
     park_list
-    prompt_to_input
+    puts "For more info, type the number of the park.".colorize(:red)
 
     input = gets.strip.to_i
     input_condition(input)
@@ -31,23 +31,33 @@ class CommandLineInterface
     end
   end
 
-  def prompt_to_input
-    puts "For more info, type the number of the park.".colorize(:blue)
+  def input_condition(input)
+    if input.to_i >= 0 && input.to_i <= 122
+      true
+    elsif input == "exit"
+      goodbye
+    else
+      puts "Invalid entry. Please try again.".colorize(:red)
+      sleep(1)
+      run
+    end
   end
 
   def display_park_info(park)
-    puts "You have chosen #{park.name}."
-    puts park.description
-    puts "______________________________"
-    puts "#{more_info}#{park.name}?".colorize(:blue)
+    puts "You have chosen #{park.name}.".colorize(:green)
+    Scraper.new.scrape_park_page(park)
+    puts park.description.to_s.colorize(:light_green)
+    puts "--------------------------------------"
+    puts "Would you like more info on #{park.name}, yes or no?".colorize(:red)
   end
 
   def display_additional_park_info(park)
     input = gets.strip.downcase
     if input == "yes"
-      Scraper.new.scrape_park_page(park)
       park_info(park)
       options(park)
+    elsif input == "exit"
+      goodbye
     else
       redirect
     end
@@ -58,31 +68,17 @@ class CommandLineInterface
     puts "Location in PA: #{park.location}".colorize(:light_blue)
     puts "Reservations: #{park.reservation}".colorize(:light_blue)
     puts "Experiences: #{park.experience}".colorize(:light_blue)
-    puts "______________________________"
+    puts "----------------------------------------"
   end
 
   def park_position(input)
     StatePark.find_by_id(input)
   end
 
-  def input_condition(input)
-    if input.to_i >= 0 && input.to_i <= 122
-      true
-    else
-      puts "Invalid entry. Please try again.".colorize(:red)
-      sleep(1)
-      run
-    end
-  end
-
-  def more_info
-    "Would you like to find out more about "
-  end
-
   def options(park)
-    puts back
-    puts "#{visit}#{park.name}."
-    puts exit_message
+    puts "Type 'back' to return to the park list."
+    puts "Type 'open' to visit the info webpage for #{park.name}."
+    puts "Type 'exit' to exit out of the park app."
   end
 
   def redirect
@@ -100,22 +96,7 @@ class CommandLineInterface
       open_url(park)
     elsif input2 == "exit"
       goodbye
-    else
-      puts "Invalid entry, redirecting back to park list."
-      run
     end
-  end
-
-  def back
-    "Type 'back' to return to the park list."
-  end
-
-  def visit
-    "Type 'open' to visit the info webpage for "
-  end
-
-  def exit_message
-    "Type 'exit' to exit out of the movie list."
   end
 
   def open_url(park)
@@ -125,5 +106,6 @@ class CommandLineInterface
   def goodbye
     puts "Thanks for checking out PA State Parks.".colorize(:green)
     puts "Have a great day!".colorize(:light_green)
+    exit
   end
 end
