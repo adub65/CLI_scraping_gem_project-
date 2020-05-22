@@ -1,6 +1,7 @@
 class CommandLineInterface
   def call
-    welcome
+    puts "Hello! Welcome to the PA State Parks info app.".colorize(:blue)
+    sleep(2)
     Scraper.new.scrape_parks
     run
   end
@@ -9,20 +10,14 @@ class CommandLineInterface
     park_list
     puts "For more info, type the number of the park.".colorize(:red)
 
-    input = gets.strip.to_i
-    input_condition(input)
-
+    input = gets.strip
     park = park_position(input)
+    input_condition(input)
 
     display_park_info(park)
     display_additional_park_info(park)
 
     end_commands(park)
-  end
-
-  def welcome
-    puts "Hello! Welcome to the PA State Parks info app.".colorize(:blue)
-    sleep(2)
   end
 
   def park_list
@@ -32,15 +27,20 @@ class CommandLineInterface
   end
 
   def input_condition(input)
-    if input.to_i >= 0 && input.to_i <= 122
-      true
-    elsif input == "exit"
+    if input == "exit"
       goodbye
+    elsif input.to_i >= 0 && input.to_i <= 122
+      # unless an input is a park id, show "invalid entry."
+      true
     else
       puts "Invalid entry. Please try again.".colorize(:red)
       sleep(1)
       run
     end
+  end
+
+  def park_position(input)
+    StatePark.find_by_id(input)
   end
 
   def display_park_info(park)
@@ -71,10 +71,6 @@ class CommandLineInterface
     puts "----------------------------------------"
   end
 
-  def park_position(input)
-    StatePark.find_by_id(input)
-  end
-
   def options(park)
     puts "Type 'back' to return to the park list."
     puts "Type 'open' to visit the info webpage for #{park.name}."
@@ -93,14 +89,10 @@ class CommandLineInterface
       redirect
       run
     elsif input2 == "open"
-      open_url(park)
+      Launchy.open(park.url.to_s)
     elsif input2 == "exit"
       goodbye
     end
-  end
-
-  def open_url(park)
-    Launchy.open(park.url.to_s)
   end
 
   def goodbye

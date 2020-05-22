@@ -1,9 +1,9 @@
 class Scraper
   BASE_PATH = "https://www.dcnr.pa.gov".freeze
-  attr_reader :park_page, :index_page
+  attr_reader :park_page
 
   def scrape_parks
-    @index_page = Nokogiri::HTML(
+    index_page = Nokogiri::HTML(
       HTTParty.get("#{BASE_PATH}/StateParks/FindAPark").body
     )
     state_parks = index_page.css(".ms-rtestate-field p a").reject do |park|
