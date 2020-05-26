@@ -11,9 +11,10 @@ This project will scrape the Pennsylvania Department of Conservation and Natural
 
 ## Navigation
 
-1. Type in `ruby bin/run.rb` to initiate the Command Line Interface.
-2. Once the terminal outputs the list of state parks, make a number selection that corresponds to the state park. This will print out basic info about the state park.
-3. You will then be prompted to type in one of three different selections:
+1. run `bundle install` to get all the necesary bundler items.
+2. Type in `ruby bin/run.rb` to initiate the Command Line Interface.
+3. Once the terminal outputs the list of state parks, make a number selection that corresponds to the state park. This will print out basic info about the state park.
+4. You will then be prompted to type in one of three different selections:
 `open` will open the selected park's URL in your default browser and exit out of the CLI.
 `back` will return you to the original list of parks.
 `exit` will exit out of the CLI and `puts` a goodbye message.
