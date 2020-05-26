@@ -10,9 +10,10 @@ class CommandLineInterface
     park_list
     puts "For more info, type the number of the park.".colorize(:red)
 
-    input = gets.strip
-    park = park_position(input)
+    input = gets.strip.downcase
     input_condition(input)
+
+    park = park_position(input)
 
     display_park_info(park)
     display_additional_park_info(park)
@@ -27,7 +28,9 @@ class CommandLineInterface
   end
 
   def input_condition(input)
-    if input.to_i >= 0 && input.to_i <= 122
+    if input == "exit"
+      goodbye
+    elsif input.to_i.positive? && input.to_i <= StatePark.all.count
       true
     else
       puts "Invalid entry. Please try again.".colorize(:red)
