@@ -11,9 +11,7 @@ class CommandLineInterface
     puts "For more info, type the number of the park.".colorize(:red)
 
     input = gets.strip.downcase
-    input_condition(input)
-
-    park = park_position(input)
+    park = validate_park(input)
 
     display_park_info(park)
     display_additional_park_info(park)
@@ -27,29 +25,16 @@ class CommandLineInterface
     end
   end
 
-  def input_condition(input)
+  def validate_park(input)
     if input == "exit"
       goodbye
     elsif input.to_i.positive? && input.to_i <= StatePark.all.count
-      true
+      StatePark.find_by_id(input.to_i)
     else
       puts "Invalid entry. Please try again.".colorize(:red)
       sleep(1)
       run
     end
-  end
-
-  def park_position(input)
-    StatePark.find_by_id(input)
-  end
-
-  def display_park_info(park)
-    puts "You have chosen #{park.name}.".colorize(:green)
-    Scraper.new.scrape_park_page(park)
-    puts park.description.to_s.colorize(:light_green)
-    puts "--------------------------------------"
-    puts "Type 'yes' for more info on #{park.name}!".colorize(:red)
-    puts "Type 'exit' to leave app.".colorize(:red)
   end
 
   def display_additional_park_info(park)
@@ -100,5 +85,14 @@ class CommandLineInterface
     puts "Thanks for checking out PA State Parks.".colorize(:green)
     puts "Have a great day!".colorize(:light_green)
     exit
+  end
+
+  def display_park_info(park)
+    puts "You have chosen #{park.name}.".colorize(:green)
+    Scraper.new.scrape_park_page(park)
+    puts park.description.to_s.colorize(:light_green)
+    puts "--------------------------------------"
+    puts "Type 'yes' for more info on #{park.name}!".colorize(:red)
+    puts "Type 'exit' to leave app.".colorize(:red)
   end
 end
