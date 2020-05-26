@@ -27,7 +27,7 @@ class CommandLineInterface
   end
 
   def input_condition(input)
-    if input >= 0 && input <= 122
+    if input.to_i >= 0 && input.to_i <= 122
       true
     else
       puts "Invalid entry. Please try again.".colorize(:red)
@@ -70,9 +70,9 @@ class CommandLineInterface
   end
 
   def options(park)
-    puts "Type 'back' to return to the park list.".colorize(:red)
     puts "Type 'open' to visit the info webpage for #{park.name}.".colorize(:red)
     puts "Type 'exit' to exit out of the park app.".colorize(:red)
+    puts "Type any key to return to the park list.".colorize(:red)
   end
 
   def redirect
@@ -83,13 +83,13 @@ class CommandLineInterface
 
   def end_commands(park)
     input2 = gets.strip.downcase
-    if input2 == "back"
-      redirect
-      run
-    elsif input2 == "open"
+    if input2 == "open"
       Launchy.open(park.url.to_s)
     elsif input2 == "exit"
       goodbye
+    else
+      redirect
+      run
     end
   end
 
