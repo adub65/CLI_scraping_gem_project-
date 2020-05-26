@@ -27,10 +27,7 @@ class CommandLineInterface
   end
 
   def input_condition(input)
-    if input == "exit"
-      goodbye
-    elsif input.to_i >= 0 && input.to_i <= 122
-      # unless an input is a park id, show "invalid entry."
+    if input >= 0 && input <= 122
       true
     else
       puts "Invalid entry. Please try again.".colorize(:red)
@@ -48,7 +45,8 @@ class CommandLineInterface
     Scraper.new.scrape_park_page(park)
     puts park.description.to_s.colorize(:light_green)
     puts "--------------------------------------"
-    puts "Would you like more info on #{park.name}, yes or no?".colorize(:red)
+    puts "Type 'yes' for more info on #{park.name}!".colorize(:red)
+    puts "Type 'exit' to leave app.".colorize(:red)
   end
 
   def display_additional_park_info(park)
@@ -72,9 +70,9 @@ class CommandLineInterface
   end
 
   def options(park)
-    puts "Type 'back' to return to the park list."
-    puts "Type 'open' to visit the info webpage for #{park.name}."
-    puts "Type 'exit' to exit out of the park app."
+    puts "Type 'back' to return to the park list.".colorize(:red)
+    puts "Type 'open' to visit the info webpage for #{park.name}.".colorize(:red)
+    puts "Type 'exit' to exit out of the park app.".colorize(:red)
   end
 
   def redirect
