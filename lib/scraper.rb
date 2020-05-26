@@ -43,7 +43,7 @@ private
       el.text == "Reservations"
     end
     park.reservation = if park_reserve
-                         park_reserve.next.text.gsub("\n   ", "")
+                         park_reserve.next.text.gsub("\n      ", "")
                        else
                          "No reservations available."
                        end

@@ -93,6 +93,6 @@ class CommandLineInterface
     puts park.description.to_s.colorize(:light_green)
     puts "--------------------------------------"
     puts "Type 'yes' for more info on #{park.name}!".colorize(:red)
-    puts "Type 'exit' to leave app.".colorize(:red)
+    puts "Type any key to return to park list, 'exit' to leave.".colorize(:red)
   end
 end
